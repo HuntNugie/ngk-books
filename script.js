@@ -8,9 +8,8 @@ const konten = document.getElementById ('konten');
 const defaults = async function (link) {
   try {
     const get = await getData (link);
-    let result = await Promise.all (get);
-    renderUI(result)
-    // konten.innerHTML = renderUI (result);
+    history.pushState({page:"home",data:get},"","")
+    renderUI(get)
   } catch (err) {
     console.log (`error : ${err}`);
   }
