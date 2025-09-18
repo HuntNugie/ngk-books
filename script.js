@@ -46,9 +46,8 @@ const konten = document.getElementById ('konten');
 const defaults = async function (link) {
   const get = await getData (link);
   try {
-    let result = await getImage(get);
-    const coba = await Promise.all (result);
-    konten.innerHTML = renderUI (coba);
+    let result = await Promise.all (get);
+    konten.innerHTML = renderUI (result);
   } catch (err) {
     console.log (`error : ${err}`);
   }
@@ -56,7 +55,9 @@ const defaults = async function (link) {
 
 // function untuk fetch data seluruh api nya
 function getData (link) {
-  return fetch (link).then (res => res.json ()).then (({books}) => books);
+  return fetch (link).then (res => res.json ())
+    .then (({books}) => books)
+    .then(response=>getImage(response));
 }
 
 
@@ -73,7 +74,7 @@ function renderUI (data) {
         ${element.el.summary.slice (0, 101) + '....'}
       </p>
       <div class="mt-auto">
-        <button class="btn btn-primary w-100">Detail buku</button>
+        <button class="btn btn-primary w-100" data-bukuID="${element.el._id}">Detail buku</button>
       </div>
     </div>
   </div>
@@ -96,14 +97,28 @@ function getImage(get){
       }
     });
 }
-// untuk searching
-const search = async function(){
 
+
+// untuk searching
+const search = async function(link,cari){
+  try{
+    const data = await getData(`${link}?keyword=${cari}`)
+    const result = await Promise.all(data)
+    return result
+  }catch(err){
+    console.log("error : "+err)
+  }
 }
 
+const cari = document.querySelector("input")
+document.querySelector(".cariButton").addEventListener("click",async function(){
+  let result = await search(API,cari.value)
+  konten.innerHTML = renderUI(result)
+  history.pushState({page:"search",keyword:cari.value,data:result},"",`?search=${cari.value}`)
+})
 
 
-
-defaults (API);
-
+if(history.state === null){
+  defaults (API);
+}
 
