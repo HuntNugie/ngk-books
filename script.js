@@ -1,5 +1,5 @@
 const API =
-  'https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1/book?page=1&year=2022';
+  'https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1/book';
 const proxyUrl = 'https://corsproxy.io/';
 const konten = document.getElementById ('konten');
 
@@ -66,7 +66,7 @@ function renderUI (data) {
     .map (element => {
       return `<div class="col-12 col-sm-6 col-md-4 mt-3">
   <div class="card h-100">
-    <img src="${element.imgBlob}" class="card-img-top img-fluid" style="object-fit: cover; max-height: 400px;" alt="..." />
+    <img src="${element.imgBlob}" class="card-img-top img-fluid" style="object-fit: cover; max-height: 400px;" alt=""fallback.jpg"" />
     <div class="card-body d-flex flex-column">
       <h5 class="card-title">${element.el.title}</h5>
       <p class="card-text">
@@ -89,7 +89,21 @@ function getImage(get){
       const imageUrl = await fetch (proxyUrl + el.cover_image);
       const imageBlob = await imageUrl.blob ();
       const imgUrl = URL.createObjectURL (imageBlob);
-      return {el, imgBlob: imgUrl};
+      if(imageUrl.ok){
+        return {el, imgBlob: imgUrl};
+      }else{
+        return {el,imgBlob:"fallback.jpg"}
+      }
     });
 }
+// untuk searching
+const search = async function(){
+
+}
+
+
+
+
 defaults (API);
+
+
