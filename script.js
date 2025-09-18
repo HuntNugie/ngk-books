@@ -3,51 +3,14 @@ const API =
 const proxyUrl = 'https://corsproxy.io/';
 const konten = document.getElementById ('konten');
 
-// const defaults = function (link) {
-//   let hasil = [];
-//   fetch (link).then (response => {
-//     if(response.ok){
-//         return response.json ()
-//     }
-//   }).then (response => {
-//     const {books} = response;
-//     books.map (el => {
-//       fetch (proxyUrl + el.cover_image).then (res => {
-//         if(res.ok){
-//             return res.blob ()
-//         }
-//       }).then (res => {
-//         if(res){
-//              let imageUrl = URL.createObjectURL (res);
-//         let teks = ` <div class="col-4 mt-3">
-//                         <div class="card" style="width: 25rem">
-//                             <img src="${imageUrl}" class="card-img-top img-fluid" alt="..." />
-//                             <div class="card-body">
-//                                 <h5 class="card-title">${el.title}</h5>
-//                                 <p class="card-text">
-//                                     ${el.summary.slice(0,101)+"...."}
-//                                 </p>
-//                                 <button class="btn btn-primary">Detail buku</button>
-//                             </div>
-//                  </div>
-//          </div>`;
-//         hasil.push (teks);
-//         }
-//       })
-//       .finally(()=>{
-//         konten.innerHTML = hasil.join("")
-//       })
-//     });
-//   });
-// };
-// defaults(API)
 
 // function untuk default saat browser di buka
 const defaults = async function (link) {
-  const get = await getData (link);
   try {
+    const get = await getData (link);
     let result = await Promise.all (get);
-    konten.innerHTML = renderUI (result);
+    renderUI(result)
+    // konten.innerHTML = renderUI (result);
   } catch (err) {
     console.log (`error : ${err}`);
   }
@@ -57,14 +20,16 @@ const defaults = async function (link) {
 function getData (link) {
   return fetch (link).then (res => res.json ())
     .then (({books}) => books)
-    .then(response=>getImage(response));
 }
 
 
 // function untuk render ui nya
-function renderUI (data) {
-  return data
-    .map (element => {
+async function renderUI (data) {
+  const gambar = getImage(data)
+  // console.log(gambar)
+  const result = await Promise.all(gambar)
+  // console.log(result)
+  konten.innerHTML = result.map ((element) => {
       return `<div class="col-12 col-sm-6 col-md-4 mt-3">
   <div class="card h-100">
     <img src="${element.imgBlob}" class="card-img-top img-fluid" style="object-fit: cover; max-height: 400px;" alt=""fallback.jpg"" />
@@ -87,13 +52,17 @@ function renderUI (data) {
 // function untuk dapat image
 function getImage(get){
  return get.map (async el => {
-      const imageUrl = await fetch (proxyUrl + el.cover_image);
-      const imageBlob = await imageUrl.blob ();
-      const imgUrl = URL.createObjectURL (imageBlob);
-      if(imageUrl.ok){
-        return {el, imgBlob: imgUrl};
-      }else{
-        return {el,imgBlob:"fallback.jpg"}
+      try {
+        const imageUrl = await fetch (proxyUrl + el.cover_image);
+        const imageBlob = await imageUrl.blob ();
+        const imgUrl = URL.createObjectURL (imageBlob);
+        if(imageUrl.ok){
+          return {el,imgBlob:imgUrl};
+        }else{
+          return {el,imgBlob:"fallback.jpg"}
+        }
+      } catch (error) {
+        console.log("error : "+error) 
       }
     });
 }
@@ -113,13 +82,16 @@ const search = async function(link,cari){
 const cari = document.querySelector("input")
 document.querySelector(".cariButton").addEventListener("click",async function(){
   let result = await search(API,cari.value)
-  konten.innerHTML = renderUI(result)
+  renderUI(result)
   history.pushState({page:"search",keyword:cari.value,data:result},"",`?search=${cari.value}`)
 })
 
 // jika awal buka web
 if(history.state === null){
   defaults (API);
+}else{
+  const result = renderUI(history.state.data)
+
 }
 // jika kembali ke state
 window.addEventListener("popstate", function(event){
@@ -127,6 +99,7 @@ window.addEventListener("popstate", function(event){
     defaults(API)
   }else{
     const result = renderUI(event.state.data)
-    konten.innerHTML = result
+  
   }
 })
+
