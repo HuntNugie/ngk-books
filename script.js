@@ -1,4 +1,4 @@
-const API ='https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1/book?page=2&year=2023';
+const API ='https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1/book?page=1&year=2022';
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 const konten = document.getElementById ('konten');
 
