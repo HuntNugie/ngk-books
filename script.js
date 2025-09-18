@@ -117,8 +117,16 @@ document.querySelector(".cariButton").addEventListener("click",async function(){
   history.pushState({page:"search",keyword:cari.value,data:result},"",`?search=${cari.value}`)
 })
 
-
+// jika awal buka web
 if(history.state === null){
   defaults (API);
 }
-
+// jika kembali ke state
+window.addEventListener("popstate", function(event){
+  if(event.state === null){
+    defaults(API)
+  }else{
+    const result = renderUI(event.state.data)
+    konten.innerHTML = result
+  }
+})
