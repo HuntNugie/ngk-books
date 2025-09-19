@@ -2,7 +2,8 @@ const API =
   'https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1/book';
 const proxyUrl = 'https://corsproxy.io/';
 const konten = document.getElementById ('konten');
-
+const detail = document.querySelector("#detail")
+const home = document.querySelector("#home")
 
 // function untuk default saat browser di buka
 const defaults = async function (link) {
@@ -38,7 +39,7 @@ async function renderUI (data) {
         ${element.el.summary.slice (0, 101) + '....'}
       </p>
       <div class="mt-auto">
-        <button class="btn btn-primary w-100" data-bukuID="${element.el._id}">Detail buku</button>
+        <button class="btn btn-primary w-100 detail-button" data-bukuID="${element.el._id}">Detail buku</button>
       </div>
     </div>
   </div>
@@ -86,19 +87,73 @@ document.querySelector(".cariButton").addEventListener("click",async function(){
 })
 
 // jika awal buka web
-if(history.state === null){
+window.onload = function(){
+  if(history.state === null){
   defaults (API);
-}else{
+  console.log("Ini pertama kali di buka")
+}else if(history.state?.page === "detail"){
+  renderDetail(this.history.state.data)
+}
+else{
   const result = renderUI(history.state.data)
-
+}
 }
 // jika kembali ke state
 window.addEventListener("popstate", function(event){
   if(event.state === null){
     defaults(API)
-  }else{
+  }else if(event.state?.page === "detail"){
+    renderDetail(event.state.data)
+  }
+  else{
     const result = renderUI(event.state.data)
-  
+  home.classList.toggle("d-none")
+  detail.classList.toggle("d-none")  
+  }
+})
+
+async function getDetail(link){
+  const data = await fetch(link)
+  const response = await data.json()
+    history.pushState({page:"detail",data:response},"",`?detail=${response.title}`)
+  return  renderDetail(response) 
+}
+function renderDetail(response){
+  home.classList.toggle("d-none")
+  detail.classList.toggle("d-none")
+ 
+    detail.innerHTML = `   <!-- Header -->
+    <div class="row">
+      <div class="col-12 border-bottom pb-3">
+        <h1 class="text-center my-4">Detail Buku</h1>
+      </div>
+    </div>
+
+    <!-- Detail Buku -->
+    <div class="row my-4">
+      <div class="col-md-4 text-center">
+        <img src="${response.cover_image}" 
+             alt="cover buku" 
+             class="img-fluid rounded shadow" />
+      </div>
+      <div class="col-md-8">
+        <h2 class="mb-3">${response.title}</h2>
+        <p><strong>Penulis:</strong> ${response.author.name}</p>
+        <p><strong>Tahun Terbit:</strong> ${response.details.published_date}</p>
+        <p><strong>Kategori:</strong> ${response.category.name}</p>
+        <p class="mt-3">
+        ${response.summary}
+        </p>
+
+        <!-- Tombol kembali -->
+        <a href="index.html" class="btn btn-secondary mt-4">← Kembali</a>
+      </div>
+    </div>`
+}
+konten.addEventListener("click",(el)=>{
+  if(el.target.classList.contains("detail-button")){
+    const id = el.target.dataset.bukuid
+    const klik = getDetail(`https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1/book?_id=${id}`)
   }
 })
 
