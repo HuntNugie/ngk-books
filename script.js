@@ -78,9 +78,68 @@ const search = async function(link,cari){
     console.log("error : "+err)
   }
 }
+function loading(){
+  return `         <div class="col-12 col-sm-6 col-md-4 mt-3">
+                    <div class="card h-100" aria-hidden="true">
+                        <img src="google.com" class="card-img-top img-fluid" alt="..." />
+                        <div class="card-body">
+                            <h5 class="card-title placeholder-glow">
+                                <span class="placeholder col-6"></span>
+                            </h5>
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="col-12 col-sm-6 col-md-4 mt-3">
+                    <div class="card h-100" aria-hidden="true">
+                        <img src="google.com" class="card-img-top img-fluid" alt="..." />
+                        <div class="card-body">
+                            <h5 class="card-title placeholder-glow">
+                                <span class="placeholder col-6"></span>
+                            </h5>
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-4 mt-3">
+                    <div class="card h-100" aria-hidden="true">
+                        <img src="google.com" class="card-img-top img-fluid" alt="..." />
+                        <div class="card-body">
+                            <h5 class="card-title placeholder-glow">
+                                <span class="placeholder col-6"></span>
+                            </h5>
+                            <p class="card-text placeholder-glow">
+                                <span class="placeholder col-7"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-4"></span>
+                                <span class="placeholder col-6"></span>
+                                <span class="placeholder col-8"></span>
+                            </p>
+                            <a class="btn btn-primary disabled placeholder col-6" aria-disabled="true"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>`
+}
 const cari = document.querySelector("input")
 document.querySelector(".cariButton").addEventListener("click",async function(){
+  konten.innerHTML = loading()
   let result = await search(API,cari.value)
   renderUI(result)
   history.pushState({page:"search",keyword:cari.value,data:result},"",`?search=${cari.value}`)
