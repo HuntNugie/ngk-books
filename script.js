@@ -146,7 +146,7 @@ function renderDetail(response){
         </p>
 
         <!-- Tombol kembali -->
-        <a href="index.html" class="btn btn-secondary mt-4">← Kembali</a>
+        <button class="btn btn-secondary mt-4 backBtn">← Kembali</button>
       </div>
     </div>`
 }
@@ -157,3 +157,8 @@ konten.addEventListener("click",(el)=>{
   }
 })
 
+detail.addEventListener("click",(el)=>{
+  if(el.target.classList.contains("backBtn")){
+    history.back()
+  }
+})
